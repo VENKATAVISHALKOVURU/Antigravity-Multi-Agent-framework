@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+/**
+ * ag-repro: Run targeted test to confirm bug reproduction.
+ * Usage: ag-repro "bug description keywords"
+ */
+
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+
+const bugDescription = process.argv.slice(2).join(' ');
+if (!bugDescription) {
+  console.error('Usage: ag-repro "bug description"');
+  process.exit(1);
+}
+
+console.log(`[ag-repro] Attempting to reproduce: "${bugDescription}"`);
+console.log(`[ag-repro] Running tests matching keywords...`);
+
+const keywords = bugDescription.toLowerCase()
+  .split(/\s+/)
+  .filter(w => w.length > 3)
+  .slice(0, 3)
+  .join('|');
+
+let result;
+if (fs.existsSync('package.json')) {
+  result = spawnSync('npm', ['test', '--', `--testNamePattern=${keywords}`, '--no-coverage', '--verbose'], {
+    encoding: 'utf8',
+    timeout: 60000,
+    stdio: 'inherit',
+  });
+} else if (fs.existsSync('pytest.ini') || fs.existsSync('pyproject.toml')) {
+  result = spawnSync('python', ['-m', 'pytest', '-v', '-k', keywords.replace('|', ' or ')], {
+    encoding: 'utf8',
+    timeout: 60000,
+    stdio: 'inherit',
+  });
+} else {
+  console.log('[ag-repro] No test runner detected.');
+  process.exit(1);
+}
+
+if (result.status !== 0) {
+  console.log('\n[ag-repro] ✓ BUG REPRODUCED — tests fail with these keywords');
+  process.exit(1); // Exit 1 = reproduced (tests failed)
+} else {
+  console.log('\n[ag-repro] ✗ Could not reproduce via tests.');
+  console.log('[ag-repro] Next steps:');
+  console.log('  1. Add a failing test that demonstrates the bug');
+  console.log('  2. Check server logs for runtime errors');
+  console.log('  3. Run with AG_DEBUG=1 ag-stack investigate "..."');
+  process.exit(0);
+}

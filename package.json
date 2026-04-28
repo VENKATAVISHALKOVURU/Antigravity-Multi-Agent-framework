@@ -1,0 +1,48 @@
+{
+  "name": "ag-stack",
+  "version": "1.0.0",
+  "description": "Multi-agent autonomous engineering team for AntiGravity. 8 specialist agents that plan, design, build, test, audit, and ship — checking each other's work at every step.",
+  "main": "ag.js",
+  "bin": {
+    "ag-stack": "./ag.js"
+  },
+  "scripts": {
+    "start": "node ag.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "setup": "bash bin/setup"
+  },
+  "keywords": [
+    "antigravity",
+    "multi-agent",
+    "autonomous",
+    "ai-agents",
+    "code-review",
+    "qa",
+    "security",
+    "devops",
+    "ag-stack"
+  ],
+  "author": "ag-stack contributors",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "playwright": "^1.40.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "agents/**/*.js",
+      "orchestrator/**/*.js",
+      "!**/node_modules/**"
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# ag-stack-init: Bootstrap ag-stack into your project
+set -e
+
+AG_STACK_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PROJECT_DIR="$(pwd)"
+
+echo ""
+echo "Bootstrapping ag-stack into: $PROJECT_DIR"
+echo ""
+
+# Detect project type
+STACK=""
+if [ -f "package.json" ]; then
+  FRAMEWORK=$(node -e "const p=require('./package.json'); const deps={...p.dependencies,...p.devDependencies}; if(deps.next) console.log('Next.js'); else if(deps.react) console.log('React'); else if(deps.express) console.log('Express'); else if(deps.fastify) console.log('Fastify'); else console.log('Node.js')" 2>/dev/null)
+  STACK="$FRAMEWORK"
+elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+  STACK="Python"
+elif [ -f "go.mod" ]; then
+  STACK="Go"
+elif [ -f "Cargo.toml" ]; then
+  STACK="Rust"
+fi
+
+PROJECT_NAME=$(basename "$PROJECT_DIR")
+
+# Copy ANTIGRAVITY.md
+cp "$AG_STACK_DIR/ANTIGRAVITY.md" "$PROJECT_DIR/ANTIGRAVITY.md"
+echo "✓ ANTIGRAVITY.md added"
+
+# Create memory directory with project-specific workspace.json
+mkdir -p "$PROJECT_DIR/memory/learnings"
+cat > "$PROJECT_DIR/memory/workspace.json" << EOF
+{
+  "project": "$PROJECT_NAME",
+  "stack": ["$STACK"],
+  "conventions": {
+    "api_routes": null,
+    "components": null,
+    "tests": null,
+    "commits": "type(scope): description"
+  },
+  "pitfalls": [],
+  "preferences": {
+    "error_handling": "always surface errors, never swallow",
+    "logging": "structured JSON preferred"
+  },
+  "agentRuns": [],
+  "lastUpdated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+}
+EOF
+echo "✓ memory/workspace.json created"
+
+# Add .ag to gitignore if not already there
+if [ -f ".gitignore" ]; then
+  if ! grep -q "^\.ag/$" .gitignore; then
+    echo "" >> .gitignore
+    echo "# ag-stack runtime" >> .gitignore
+    echo ".ag/" >> .gitignore
+    echo "qa-screenshots/" >> .gitignore
+    echo "memory/workspace.json" >> .gitignore
+  fi
+else
+  cat > .gitignore << 'EOF'
+# ag-stack runtime
+.ag/
+qa-screenshots/
+memory/workspace.json
+node_modules/
+.env
+EOF
+fi
+echo "✓ .gitignore updated"
+
+# Create VERSION file if not present
+if [ ! -f "VERSION" ]; then
+  echo "0.1.0.0" > VERSION
+  echo "✓ VERSION file created (0.1.0.0)"
+fi
+
+# Create CHANGELOG.md if not present
+if [ ! -f "CHANGELOG.md" ]; then
+  cat > CHANGELOG.md << EOF
+# Changelog
+
+> Changes documented here by the ag-stack Release Manager after each ship.
+> Format: \`## [version] — YYYY-MM-DD\`
+EOF
+  echo "✓ CHANGELOG.md created"
+fi
+
+# Create .ag directory
+mkdir -p .ag/snapshots
+
+echo ""
+echo "✅ ag-stack initialized in $PROJECT_NAME ($STACK)"
+echo ""
+echo "Usage:"
+echo "  ag-stack autoplan \"$PROJECT_NAME: add [your feature here]\""
+echo "  ag-stack review"
+echo "  ag-stack qa"
+echo "  ag-stack ship patch"
+echo ""

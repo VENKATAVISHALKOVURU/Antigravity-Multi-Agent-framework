@@ -1,0 +1,11 @@
+node_modules/
+.ag/
+qa-screenshots/
+memory/workspace.json
+coverage/
+.env
+.env.local
+.env.production
+*.log
+dist/
+build/
