@@ -1,48 +1,18 @@
 {
-  "name": "ag-stack",
+  "name": "ag-stack-install",
   "version": "1.0.0",
-  "description": "Multi-agent autonomous engineering team for AntiGravity. 8 specialist agents that plan, design, build, test, audit, and ship — checking each other's work at every step.",
-  "main": "ag.js",
+  "description": "8 specialist AI agents for AntiGravity — plan, design, review, test, audit, ship",
   "bin": {
-    "ag-stack": "./ag.js"
+    "ag-stack-install": "./install.js"
   },
   "scripts": {
-    "start": "node ag.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix",
-    "setup": "bash bin/setup"
+    "install-global":  "node install.js --global",
+    "install-project": "node install.js --project"
   },
-  "keywords": [
-    "antigravity",
-    "multi-agent",
-    "autonomous",
-    "ai-agents",
-    "code-review",
-    "qa",
-    "security",
-    "devops",
-    "ag-stack"
-  ],
-  "author": "ag-stack contributors",
+  "keywords": ["antigravity", "skills", "agents", "ai", "vibe-coding", "cursor", "windsurf"],
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
-    "jest": "^29.0.0",
-    "eslint": "^8.0.0",
-    "playwright": "^1.40.0"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/__tests__/**/*.js",
-      "**/*.test.js"
-    ],
-    "collectCoverageFrom": [
-      "agents/**/*.js",
-      "orchestrator/**/*.js",
-      "!**/node_modules/**"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework.git"
   }
 }
