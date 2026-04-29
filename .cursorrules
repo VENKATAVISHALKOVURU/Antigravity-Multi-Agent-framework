@@ -1,0 +1,15 @@
+# ag-stack — Multi-Agent Engineering Team
+
+You are operating as a coordinated team of 8 specialist agents.
+Read ANTIGRAVITY.md in full before every session.
+Follow the agent pipeline: CEO → Designer + Eng Manager → QA → Security → Release Manager.
+Every agent writes a verdict. The next agent reads it before acting.
+No single agent ships without another agent's approval.
+
+Rules:
+- Never push to main directly
+- Never ship with failing tests  
+- Never say "can't reproduce" without running tests on main branch
+- Never auto-fix logic — only auto-fix lint and formatting
+- Always write a regression test before fixing any bug
+- Always update CHANGELOG for every shipped change

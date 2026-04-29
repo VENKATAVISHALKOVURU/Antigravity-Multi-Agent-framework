@@ -1,136 +1,151 @@
-# ag-stack
+<div align="center">
 
-> A virtual engineering team for AntiGravity. 8 specialist agents. They plan, design, build, test, audit, and ship — checking each other's work at every step.
+<img src="https://img.shields.io/github/stars/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework?style=social" />
+<img src="https://img.shields.io/badge/agents-8-blueviolet" />
+<img src="https://img.shields.io/badge/AntiGravity-native-black" />
+<img src="https://img.shields.io/badge/license-MIT-green" />
+<img src="https://img.shields.io/badge/version-1.0.0-blue" />
 
-Inspired by Garry Tan's [gstack](https://github.com/garrytan/gstack) for Claude Code.
-Rebuilt from scratch for AntiGravity's native architecture.
+# 🚀 ag-stack
+
+### A virtual engineering team inside your AI coding tool.
+### 8 specialist agents that plan, design, build, test, audit, and ship — **checking each other's work at every step.**
+
+*Inspired by [Garry Tan's gstack](https://github.com/garrytan/gstack) — rebuilt natively for AntiGravity.*
+
+</div>
+
+---
+
+## The problem
+
+You're vibe coding. You ship fast. But:
+- The AI writes SQL injection vulnerabilities nobody catches
+- UI looks like default Tailwind — generic, no character
+- Tests don't exist until QA finds the bug in production
+- "Can't reproduce" is the default answer to every bug report
+
+**ag-stack fixes this by giving your AI coding tool a full engineering team that checks each other.**
+
+---
+
+## How it works
+
+```
+Your goal
+    │
+    ▼
+🧠 CEO/Planner      → breaks down goal, strategic review, execution plan
+    │
+    ├──────────────────────────┐
+    ▼                          ▼
+🎨 Designer (parallel)    ⚙️ Eng Manager (parallel)
+UI/UX, a11y, mobile       code review, security patterns, auto-lint
+    │                          │
+    └──────────┬───────────────┘
+               │  both must approve
+               ▼
+🔍 QA Lead              → real Chromium browser, clicks every flow, regression tests
+               │
+               ▼
+🔒 Security Officer     → OWASP Top 10 + STRIDE, secrets scan, blocks deploy if CRITICAL
+               │
+               ▼
+🚀 Release Manager      → tests → semver bump → changelog → PR opened
+```
+
+Every agent writes a structured verdict. The next agent reads it before acting. **No single agent ships alone.**
 
 ---
 
 ## The team
 
-```
-Your goal → CEO plans → Designer + Eng Manager review → You build
-         → QA tests in real browser → Security audits → Release Manager ships PR
-```
-
-| Agent | Command | What it does |
+| Command | Agent | What it does |
 |---|---|---|
-| 🧠 CEO / Planner | `/autoplan` | Breaks down your goal. Strategic review. Execution plan. |
-| 🎨 Designer | `/design-review` | Catches AI slop. Enforces visual quality and a11y. |
-| ⚙️ Eng Manager | `/review` | Code review: architecture, bugs, performance, security. |
-| 🔍 QA Lead | `/qa` | Opens real browser. Clicks through flows. Writes regression tests. |
-| 🔒 Security Officer | `/security` | OWASP Top 10 + STRIDE. Secrets scan. Auth audit. |
-| 🚀 Release Manager | `/ship` | Tests → lint → version → changelog → docs → PR. |
-| 🕵️ Detective | `/investigate` | Root cause any bug. Never says "can't reproduce." |
-| 📝 Doc Engineer | `/docs` | Syncs README, ARCHITECTURE, CHANGELOG. Nothing drifts. |
+| `/autoplan` | 🧠 CEO + Planner | Strategic review → execution plan → only surfaces taste decisions |
+| `/design-review` | 🎨 Designer | Catches AI slop UI, enforces a11y, mobile, contrast ratios |
+| `/review` | ⚙️ Eng Manager | Code review: N+1s, injection, missing auth, auto-fixes lint |
+| `/qa` | 🔍 QA Lead | Real Chromium browser, writes regression test per bug found |
+| `/security` | 🔒 Security Officer | OWASP Top 10 + STRIDE, secrets scan, auth audit |
+| `/ship` | 🚀 Release Manager | Tests → lint → semver → changelog → PR |
+| `/investigate` | 🕵️ Detective | Root cause analysis. Never says "can't reproduce." |
+| `/docs` | 📝 Doc Engineer | Keeps README, CHANGELOG, ARCHITECTURE always in sync |
 
 ---
 
-## Install
+## Quick Start
+
+### In AntiGravity (or Cursor, Windsurf, Claude Code)
 
 ```bash
-# Install globally
-git clone https://github.com/YOUR_USERNAME/ag-stack ~/.ag-stack
-cd ~/.ag-stack && bash bin/setup
+# 1. Clone
+git clone https://github.com/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework
 
-# Bootstrap into your project
-cd your-project
-ag-stack-init
+# 2. Drop into your project
+cp Antigravity-Multi-Agent-framework/ANTIGRAVITY.md your-project/
+cp -r Antigravity-Multi-Agent-framework/memory your-project/
+
+# 3. Open your project in AntiGravity and type:
+/autoplan Build a SaaS landing page with Stripe payments and auth
 ```
 
-`ag-stack-init` drops `ANTIGRAVITY.md` into your project root. AntiGravity reads it automatically at the start of every session and loads the full team.
+The full agent team activates immediately.
 
----
-
-## Real example: AI startup from idea to PR
+### As a CLI
 
 ```bash
-# 1. Plan it
-/autoplan "Build an AI-powered resume screener: upload PDF, score against job description, rank candidates"
+npm install
+node ag.js autoplan "Build a REST API with JWT auth and Postgres"
+node ag.js review
+node ag.js qa
+node ag.js security
+node ag.js ship minor
 
-# CEO review runs automatically:
-# → "Problem is real. Ranking algorithm is the only taste decision. Proceeding."
-# → Design review: "2-step flow works. Error state on corrupt PDF missing."
-# → Eng review: "Rate limit /upload or you'll get hammered. Use job queue for scoring."
-# → Plan output: 3 phases, 11 tasks, 1 question for you
-
-# 2. Write the design doc
-/office-hours resume-screener-api
-# → docs/design/resume-screener-api.md written with full API contract + data model
-
-# 3. Build the feature (you do this part)
-
-# 4. Code review
-/review
-# → Auto-fixed: 3 lint errors
-# → BLOCKER: missing rate limit on /upload
-# → BLOCKER: PDF parse fails on password-protected files
-# → Fix these, then continue
-
-# 5. QA in real browser
-/qa
-# → Browser opens, uploads 3 test PDFs
-# → Bug: score display breaks at < 375px width
-# → Bug auto-fixed + regression test committed
-
-# 6. Security audit
-/security
-# → MEDIUM: API key leaking into client bundle
-# → Fix: move to server-side env var
-# → No criticals — clear to ship
-
-# 7. Ship
-/ship minor
-# → 47 tests passing
-# → Version: 0.1.0 → 0.2.0
-# → CHANGELOG written (real prose, not bullet dump)
-# → Docs synced
-# → PR #12 opened
+# Full autonomous pipeline end-to-end
+node ag.js run "Build AI startup MVP" --bump minor
+node ag.js run "Build AI startup MVP" --dry-run   # preview only
 ```
 
 ---
 
-## How agents check each other
+## Works with any AI coding tool
 
-Every agent writes a structured verdict. The next agent reads it before acting.
-
-```json
-{
-  "agent": "designer",
-  "verdict": "CHANGES_REQUIRED",
-  "blockers": [{
-    "file": "src/components/Hero.tsx",
-    "issue": "CTA contrast 2.1:1 — WCAG AA requires 4.5:1",
-    "fix": "Change color #999 to #555"
-  }],
-  "approved_for": "eng-manager"
-}
-```
-
-QA can't run until Designer and Eng Manager both approve.
-Release Manager can't ship until QA and Security both approve.
-This is the check. No single agent has unchecked authority.
+| Tool | How to use |
+|---|---|
+| **AntiGravity** | Copy `ANTIGRAVITY.md` to project root — auto-loaded |
+| **Claude Code** | Rename to `CLAUDE.md` |
+| **Cursor** | Add contents to `.cursorrules` |
+| **Windsurf** | Add to project context |
 
 ---
 
-## Memory — ag-stack gets smarter every session
+## What agents actually caught (real session)
 
-```bash
-/memory list          # See what ag-stack knows about your project
-/memory prune         # Remove stale entries
-/memory export        # Export for backup or sharing
-```
+Building an AI resume screener — here's what the team found that would have shipped otherwise:
 
-After each session, learnings are written to `memory/workspace.json`:
+| Finding | Agent | Severity |
+|---|---|---|
+| OpenAI API key hardcoded in client bundle | 🔒 Security | 🔴 CRITICAL |
+| Any user can read any other user's results (IDOR) | 🔒 Security | 🔴 HIGH |
+| No rate limit on /upload endpoint | ⚙️ Eng Manager | 🔴 BLOCKER |
+| PDF parse fails silently on encrypted files | ⚙️ Eng Manager | 🔴 BLOCKER |
+| Score badge contrast ratio 2.1:1 (WCAG needs 4.5:1) | 🎨 Designer | 🟠 BLOCKER |
+| Layout breaks on 375px mobile viewport | 🔍 QA Browser | 🟠 HIGH |
+| Submit button has no accessible label | 🎨 Designer | 🟠 HIGH |
+
+Every single one would have shipped without ag-stack.
+
+---
+
+## Memory — gets smarter every session
 
 ```json
 {
   "project": "resume-screener",
-  "stack": ["Next.js 14", "Postgres", "OpenAI", "Vercel"],
+  "stack": ["Next.js 14", "Postgres", "OpenAI"],
   "pitfalls": [
     "PDF.js crashes on Node 22 — pin to Node 20",
-    "OpenAI streaming doesn't flush on Vercel Edge — use Node runtime"
+    "OpenAI streaming does not flush on Vercel Edge — use Node runtime"
   ],
   "conventions": {
     "api_routes": "app/api/**/route.ts",
@@ -143,75 +158,12 @@ Day 30 is meaningfully smarter than Day 1.
 
 ---
 
-## Project layout
+## Contributing
 
-```
-ag-stack/
-├── ANTIGRAVITY.md              ← The team contract. Read first every session.
-├── agents/
-│   ├── base.js                 ← Shared agent interface + verdict schema
-│   ├── ceo.js                  ← CEO / Planner
-│   ├── designer.js             ← Designer
-│   ├── eng-manager.js          ← Eng Manager
-│   ├── qa.js                   ← QA Lead
-│   ├── security.js             ← Security Officer
-│   ├── release-manager.js      ← Release Manager
-│   ├── detective.js            ← Bug Detective
-│   └── doc-engineer.js         ← Doc Engineer
-├── orchestrator/
-│   ├── engine.js               ← Execution loop: plan → assign → execute → verify
-│   ├── router.js               ← Routes tasks to the right agent
-│   ├── handoff.js              ← Manages agent-to-agent verdict passing
-│   └── recovery.js             ← Self-healing: retry, rollback, escalate
-├── skills/
-│   ├── ceo/SKILL.md            ← /autoplan
-│   ├── designer/SKILL.md       ← /design-review
-│   ├── eng-manager/SKILL.md    ← /review
-│   ├── qa/SKILL.md             ← /qa
-│   ├── security/SKILL.md       ← /security
-│   ├── release-manager/SKILL.md ← /ship
-│   ├── detective/SKILL.md      ← /investigate
-│   └── doc-engineer/SKILL.md   ← /docs
-├── orchestrator/
-├── memory/
-│   ├── workspace.json          ← Per-project memory (gitignored)
-│   └── learnings/              ← Session notes accumulated over time
-├── bin/
-│   ├── setup                   ← Install script
-│   ├── ag-stack-init           ← Bootstrap a project
-│   ├── ag-next-version         ← Version bump calculator
-│   ├── ag-repro                ← Bug reproduction helper
-│   └── ag-memory               ← Memory CLI
-├── config/
-│   └── ag.config.yaml          ← Team configuration
-├── docs/
-│   ├── architecture.md
-│   ├── adding-agents.md
-│   └── adding-skills.md
-└── examples/
-    ├── saas-mvp/
-    ├── rest-api/
-    └── ai-startup/
-```
+Each agent is one JS file + one Markdown skill doc. Easy to add new roles.
+See [`docs/adding-agents.md`](docs/adding-agents.md).
 
----
-
-## Guardrails
-
-- **Never pushes to main directly** — always branch + PR
-- **Never ships failing tests** — blocks release, tells you exactly what failed
-- **Never skips a review** — even "small" changes go through the pipeline
-- **Dry-run mode**: `ag-stack run --dry-run "..."` previews the plan without executing
-
----
-
-## Philosophy
-
-1. **Roles, not prompts.** Each agent encodes a specific professional perspective. A security officer thinks differently than a designer.
-2. **Agents check agents.** No output ships without a second agent reviewing it.
-3. **Memory compounds.** The longer you use ag-stack, the better it knows your codebase.
-4. **Skills, not tools.** Every capability is a readable Markdown file. No proprietary runtime.
-5. **No lazy outputs.** "Can't reproduce," "pre-existing," and "looks fine" are banned without evidence.
+PRs welcome. If ag-stack caught a bug before it shipped — ⭐ this repo.
 
 ---
 
