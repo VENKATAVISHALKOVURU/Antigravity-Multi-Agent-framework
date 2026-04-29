@@ -3,170 +3,143 @@
 <img src="https://img.shields.io/github/stars/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework?style=social" />
 <img src="https://img.shields.io/badge/agents-8-blueviolet" />
 <img src="https://img.shields.io/badge/AntiGravity-native-black" />
+<img src="https://img.shields.io/badge/works%20in-Cursor%20%7C%20Windsurf%20%7C%20Claude%20Code-blue" />
 <img src="https://img.shields.io/badge/license-MIT-green" />
-<img src="https://img.shields.io/badge/version-1.0.0-blue" />
 
-# 🚀 ag-stack
+# ag-stack
 
-### A virtual engineering team inside your AI coding tool.
-### 8 specialist agents that plan, design, build, test, audit, and ship — **checking each other's work at every step.**
-
-*Inspired by [Garry Tan's gstack](https://github.com/garrytan/gstack) — rebuilt natively for AntiGravity.*
+**8 specialist AI agents that live inside AntiGravity (and Cursor, Windsurf, Claude Code).**  
+They plan, design, build, test, audit, and ship — checking each other's work at every step.
 
 </div>
 
 ---
 
-## The problem
+## Install in 30 seconds
 
-You're vibe coding. You ship fast. But:
-- The AI writes SQL injection vulnerabilities nobody catches
-- UI looks like default Tailwind — generic, no character
-- Tests don't exist until QA finds the bug in production
-- "Can't reproduce" is the default answer to every bug report
+```bash
+# Clone once anywhere on your machine
+git clone https://github.com/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework ~/ag-stack
 
-**ag-stack fixes this by giving your AI coding tool a full engineering team that checks each other.**
+# Install globally — works in ALL your projects
+bash ~/ag-stack/install/install.sh --global
+
+# OR install just for current project
+bash ~/ag-stack/install/install.sh --project
+```
+
+**Restart AntiGravity. The agents are now active.** No config. No API keys. No setup.
 
 ---
 
-## How it works
+## How it activates
+
+AntiGravity automatically reads skill files from:
+- **Global:** `~/.gemini/antigravity/skills/` — active in every project
+- **Per project:** `.agent/skills/` — active only in that project
+
+The installer drops all 8 agent skill files into whichever location you choose.  
+When you describe a task, AntiGravity picks the right agent automatically.
 
 ```
-Your goal
-    │
-    ▼
-🧠 CEO/Planner      → breaks down goal, strategic review, execution plan
-    │
-    ├──────────────────────────┐
-    ▼                          ▼
-🎨 Designer (parallel)    ⚙️ Eng Manager (parallel)
-UI/UX, a11y, mobile       code review, security patterns, auto-lint
-    │                          │
-    └──────────┬───────────────┘
-               │  both must approve
-               ▼
-🔍 QA Lead              → real Chromium browser, clicks every flow, regression tests
-               │
-               ▼
-🔒 Security Officer     → OWASP Top 10 + STRIDE, secrets scan, blocks deploy if CRITICAL
-               │
-               ▼
-🚀 Release Manager      → tests → semver bump → changelog → PR opened
+You type:  "Plan a SaaS billing feature with Stripe"
+           → ag-ceo activates: strategic review + execution plan
+
+You type:  "Review my code changes"  
+           → ag-eng-manager activates: code review + auto-lint
+
+You type:  "Test the app in a browser"
+           → ag-qa activates: Playwright browser testing
+
+You type:  "Check security before I deploy"
+           → ag-security activates: OWASP Top 10 + STRIDE audit
+
+You type:  "Ship this as a patch release"
+           → ag-release-manager activates: tests → version → changelog → PR
 ```
 
-Every agent writes a structured verdict. The next agent reads it before acting. **No single agent ships alone.**
+No slash commands needed. Just describe what you want.
 
 ---
 
-## The team
+## The 8 agents
 
-| Command | Agent | What it does |
+| Agent | Activates when you say... | What it does |
 |---|---|---|
-| `/autoplan` | 🧠 CEO + Planner | Strategic review → execution plan → only surfaces taste decisions |
-| `/design-review` | 🎨 Designer | Catches AI slop UI, enforces a11y, mobile, contrast ratios |
-| `/review` | ⚙️ Eng Manager | Code review: N+1s, injection, missing auth, auto-fixes lint |
-| `/qa` | 🔍 QA Lead | Real Chromium browser, writes regression test per bug found |
-| `/security` | 🔒 Security Officer | OWASP Top 10 + STRIDE, secrets scan, auth audit |
-| `/ship` | 🚀 Release Manager | Tests → lint → semver → changelog → PR |
-| `/investigate` | 🕵️ Detective | Root cause analysis. Never says "can't reproduce." |
-| `/docs` | 📝 Doc Engineer | Keeps README, CHANGELOG, ARCHITECTURE always in sync |
+| 🧠 **ag-ceo** | "plan", "break down", "what should I build" | Strategic review + phased execution plan |
+| 🎨 **ag-designer** | "review UI", "check accessibility", "mobile" | Catches AI slop, a11y, contrast, mobile bugs |
+| ⚙️ **ag-eng-manager** | "review code", "check PR", "before I merge" | Code review: N+1s, injection, missing auth, auto-lint |
+| 🔍 **ag-qa** | "test this", "QA", "browser testing" | Real browser testing + regression tests per bug |
+| 🔒 **ag-security** | "security audit", "check before deploy" | OWASP Top 10 + STRIDE + secrets scan |
+| 🚀 **ag-release-manager** | "ship this", "open a PR", "release" | Tests → semver → changelog → PR |
+| 🕵️ **ag-detective** | "investigate", "root cause", "why is this broken" | Traces bugs to source. Never says "can't reproduce." |
+| 📝 **ag-doc-engineer** | "update docs", "sync readme" | Keeps all docs current after every change |
 
 ---
 
-## Quick Start
+## How agents check each other
 
-### In AntiGravity (or Cursor, Windsurf, Claude Code)
+Each agent writes a structured verdict before the next one runs:
 
-```bash
-# 1. Clone
-git clone https://github.com/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework
-
-# 2. Drop into your project
-cp Antigravity-Multi-Agent-framework/ANTIGRAVITY.md your-project/
-cp -r Antigravity-Multi-Agent-framework/memory your-project/
-
-# 3. Open your project in AntiGravity and type:
-/autoplan Build a SaaS landing page with Stripe payments and auth
+```
+🧠 CEO approves the plan
+        ↓
+🎨 Designer reviews UI     ⚙️ Eng Manager reviews code   (parallel)
+        ↓                          ↓
+        └──────── both approve ────┘
+                        ↓
+              🔍 QA tests in browser
+                        ↓
+              🔒 Security audits code
+                        ↓
+              🚀 Release Manager ships
 ```
 
-The full agent team activates immediately.
-
-### As a CLI
-
-```bash
-npm install
-node ag.js autoplan "Build a REST API with JWT auth and Postgres"
-node ag.js review
-node ag.js qa
-node ag.js security
-node ag.js ship minor
-
-# Full autonomous pipeline end-to-end
-node ag.js run "Build AI startup MVP" --bump minor
-node ag.js run "Build AI startup MVP" --dry-run   # preview only
-```
+No single agent has unchecked authority. A security CRITICAL blocks the deploy — always.
 
 ---
 
-## Works with any AI coding tool
+## Works in all AI coding tools
 
-| Tool | How to use |
+| Tool | How skills load |
 |---|---|
-| **AntiGravity** | Copy `ANTIGRAVITY.md` to project root — auto-loaded |
-| **Claude Code** | Rename to `CLAUDE.md` |
-| **Cursor** | Add contents to `.cursorrules` |
-| **Windsurf** | Add to project context |
+| **AntiGravity** | `~/.gemini/antigravity/skills/` or `.agent/skills/` — auto-detected |
+| **Cursor** | Copy `.agent/skills/` into project, or add to `.cursorrules` |
+| **Windsurf** | Same as Cursor — `.agent/skills/` in project root |
+| **Claude Code** | Skills auto-load from `.agent/skills/` |
 
 ---
 
-## What agents actually caught (real session)
+## Real bugs these agents caught
 
-Building an AI resume screener — here's what the team found that would have shipped otherwise:
-
-| Finding | Agent | Severity |
+| Bug | Agent | Would it have shipped? |
 |---|---|---|
-| OpenAI API key hardcoded in client bundle | 🔒 Security | 🔴 CRITICAL |
-| Any user can read any other user's results (IDOR) | 🔒 Security | 🔴 HIGH |
-| No rate limit on /upload endpoint | ⚙️ Eng Manager | 🔴 BLOCKER |
-| PDF parse fails silently on encrypted files | ⚙️ Eng Manager | 🔴 BLOCKER |
-| Score badge contrast ratio 2.1:1 (WCAG needs 4.5:1) | 🎨 Designer | 🟠 BLOCKER |
-| Layout breaks on 375px mobile viewport | 🔍 QA Browser | 🟠 HIGH |
-| Submit button has no accessible label | 🎨 Designer | 🟠 HIGH |
-
-Every single one would have shipped without ag-stack.
+| OpenAI API key hardcoded in client bundle | 🔒 Security | Yes — 100% |
+| Any user can read any other user's data (IDOR) | 🔒 Security | Yes |
+| No rate limit on /upload — trivial to DDoS | ⚙️ Eng Manager | Yes |
+| PDF parse fails silently on encrypted files | ⚙️ Eng Manager | Yes |
+| CTA button contrast ratio 2.1:1 (need 4.5:1) | 🎨 Designer | Yes |
+| Layout breaks at 375px mobile | 🔍 QA Browser | Yes |
+| Submit button has no accessible label | 🎨 Designer | Yes |
 
 ---
 
-## Memory — gets smarter every session
+## Update
 
-```json
-{
-  "project": "resume-screener",
-  "stack": ["Next.js 14", "Postgres", "OpenAI"],
-  "pitfalls": [
-    "PDF.js crashes on Node 22 — pin to Node 20",
-    "OpenAI streaming does not flush on Vercel Edge — use Node runtime"
-  ],
-  "conventions": {
-    "api_routes": "app/api/**/route.ts",
-    "tests": "*.test.ts adjacent to source file"
-  }
-}
+```bash
+cd ~/ag-stack
+git pull
+bash install/install.sh --global  # re-installs updated skills
 ```
-
-Day 30 is meaningfully smarter than Day 1.
 
 ---
 
 ## Contributing
 
-Each agent is one JS file + one Markdown skill doc. Easy to add new roles.
-See [`docs/adding-agents.md`](docs/adding-agents.md).
+Each agent is a single `SKILL.md` file in `skills/agent-name/`. Easy to improve, fork, or add new roles.
 
-PRs welcome. If ag-stack caught a bug before it shipped — ⭐ this repo.
+If ag-stack caught a bug before it shipped — ⭐ this repo.
 
 ---
 
-## License
-
-MIT
+MIT License
