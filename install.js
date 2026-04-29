@@ -20,7 +20,7 @@ const TARGET       = isGlobal ? GLOBAL_PATH : PROJECT_PATH;
 const SKILLS_SRC = path.join(__dirname, 'skills');
 
 const AGENTS = [
-  'ag-ceo', 'ag-designer', 'ag-eng-manager',
+  'ag-orchestrator', 'ag-ceo', 'ag-designer', 'ag-eng-manager',
   'ag-qa', 'ag-security', 'ag-release-manager',
   'ag-detective', 'ag-doc-engineer'
 ];
@@ -70,3 +70,15 @@ console.log('  "Ship this as a minor release"    → 🚀 Release Manager');
 console.log('  "Investigate this bug"            → 🕵️  Detective');
 console.log('  "Sync all documentation"          → 📝 Doc Engineer');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
+// Also create the pipeline state directory
+const pipelineDir = isGlobal 
+  ? path.join(os.homedir(), '.gemini', 'antigravity', 'pipeline')
+  : path.join(process.cwd(), '.agent', 'pipeline');
+fs.mkdirSync(pipelineDir, { recursive: true });
+
+console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('  To run ALL agents at once (full pipeline):');
+console.log('  Just say: "run the full pipeline" or "build and ship"');
+console.log('  → ag-orchestrator activates and chains all 8 agents');
+console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
