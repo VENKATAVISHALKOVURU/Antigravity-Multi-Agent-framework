@@ -1,84 +1,51 @@
 #!/usr/bin/env node
-/**
- * ag-stack installer
- * Run: npx ag-stack-install
- * or:  node install.js [--global | --project]
- */
-
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
-const { execSync } = require('child_process');
 
-const args     = process.argv.slice(2);
-const isGlobal = args.includes('--global') || !args.includes('--project');
-
+const isProject = process.argv.includes('--project');
 const GLOBAL_PATH  = path.join(os.homedir(), '.gemini', 'antigravity', 'skills');
 const PROJECT_PATH = path.join(process.cwd(), '.agent', 'skills');
-const TARGET       = isGlobal ? GLOBAL_PATH : PROJECT_PATH;
-
-const SKILLS_SRC = path.join(__dirname, 'skills');
-
-const AGENTS = [
-  'ag-orchestrator', 'ag-ceo', 'ag-designer', 'ag-eng-manager',
-  'ag-qa', 'ag-security', 'ag-release-manager',
-  'ag-detective', 'ag-doc-engineer'
-];
+const TARGET       = isProject ? PROJECT_PATH : GLOBAL_PATH;
+const SKILL_SRC    = path.join(__dirname, 'skills', 'ag-stack');
+const SKILL_DEST   = path.join(TARGET, 'ag-stack');
 
 console.log('\n╔══════════════════════════════════════════════════════╗');
-console.log('║         ag-stack · AntiGravity Skills Installer     ║');
+console.log('║       ag-stack · AntiGravity Skill Installer        ║');
 console.log('╚══════════════════════════════════════════════════════╝\n');
-console.log(`Installing ${isGlobal ? 'GLOBALLY' : 'for this project'} → ${TARGET}\n`);
+console.log(`Mode:   ${isProject ? 'Project only (.agent/skills/)' : 'Global (~/.gemini/antigravity/skills/)'}`);
+console.log(`Target: ${SKILL_DEST}\n`);
 
-fs.mkdirSync(TARGET, { recursive: true });
-
-let installed = 0;
-for (const agent of AGENTS) {
-  const src  = path.join(SKILLS_SRC, agent);
-  const dest = path.join(TARGET, agent);
-  if (!fs.existsSync(src)) { console.log(`  ⚠ Skipping ${agent} (not found in ${src})`); continue; }
+function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
-  // Copy SKILL.md and scripts/ if present
-  const files = fs.readdirSync(src);
-  for (const f of files) {
-    const s = path.join(src, f);
-    const d = path.join(dest, f);
-    if (fs.statSync(s).isDirectory()) {
-      fs.mkdirSync(d, { recursive: true });
-      for (const sf of fs.readdirSync(s)) {
-        fs.copyFileSync(path.join(s, sf), path.join(d, sf));
-      }
-    } else {
-      fs.copyFileSync(s, d);
-    }
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, entry.name);
+    const d = path.join(dest, entry.name);
+    if (entry.isDirectory()) copyDir(s, d);
+    else fs.copyFileSync(s, d);
   }
-  console.log(`  ✓ ${agent}`);
-  installed++;
 }
 
-console.log(`\n✅ ${installed}/8 agents installed to:\n   ${TARGET}`);
+if (!fs.existsSync(SKILL_SRC)) {
+  console.error(`ERROR: ${SKILL_SRC} not found`); process.exit(1);
+}
+
+fs.mkdirSync(TARGET, { recursive: true });
+copyDir(SKILL_SRC, SKILL_DEST);
+
+// Make scripts executable
+const scripts = path.join(SKILL_DEST, 'scripts');
+if (fs.existsSync(scripts)) {
+  fs.readdirSync(scripts).forEach(f => fs.chmodSync(path.join(scripts, f), 0o755));
+}
+
+console.log('  ✅ ag-stack installed at:', SKILL_DEST);
 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('  NEXT STEP: Restart AntiGravity');
-console.log('  Then just describe what you want in natural language:');
+console.log('  NEXT: Restart AntiGravity, then say:');
 console.log('');
-console.log('  "Plan a SaaS billing feature"    → 🧠 CEO/Planner');
-console.log('  "Review my code changes"          → ⚙️  Eng Manager');
-console.log('  "Check UI for issues"             → 🎨 Designer');
-console.log('  "Test the app in browser"         → 🔍 QA Lead');
-console.log('  "Audit security before deploy"    → 🔒 Security');
-console.log('  "Ship this as a minor release"    → 🚀 Release Manager');
-console.log('  "Investigate this bug"            → 🕵️  Detective');
-console.log('  "Sync all documentation"          → 📝 Doc Engineer');
+console.log('  "run the full pipeline on [your goal]"');
+console.log('    → All 8 agents run in sequence with verification gates');
+console.log('');
+console.log('  "continue pipeline"');
+console.log('    → Resumes from where it stopped after you fix blockers');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-
-// Also create the pipeline state directory
-const pipelineDir = isGlobal 
-  ? path.join(os.homedir(), '.gemini', 'antigravity', 'pipeline')
-  : path.join(process.cwd(), '.agent', 'pipeline');
-fs.mkdirSync(pipelineDir, { recursive: true });
-
-console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('  To run ALL agents at once (full pipeline):');
-console.log('  Just say: "run the full pipeline" or "build and ship"');
-console.log('  → ag-orchestrator activates and chains all 8 agents');
-console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');

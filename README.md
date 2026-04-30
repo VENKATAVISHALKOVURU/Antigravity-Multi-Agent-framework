@@ -1,125 +1,143 @@
 <div align="center">
 
 <img src="https://img.shields.io/github/stars/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework?style=social" />
-<img src="https://img.shields.io/badge/agents-9-blueviolet" />
-<img src="https://img.shields.io/badge/AntiGravity-native-black" />
+<img src="https://img.shields.io/badge/AntiGravity-native%20skill-black" />
+<img src="https://img.shields.io/badge/agents-8-blueviolet" />
 <img src="https://img.shields.io/badge/license-MIT-green" />
 
 # ag-stack
 
-**9 specialist AI agents that install into AntiGravity as native Skills.**  
-One phrase triggers the full team. Every agent runs in sequence. Each one gates the next.
+**One AntiGravity skill. 8 agents that run in sequence. Each one verifies the previous before moving forward.**
 
 </div>
 
 ---
 
-## Install (3 commands)
+## Install
 
 ```bash
 git clone https://github.com/VENKATAVISHALKOVURU/Antigravity-Multi-Agent-framework ~/ag-stack
-node ~/ag-stack/install.js --global
-# Restart AntiGravity
+node ~/ag-stack/install.js
 ```
 
-Global install path: `~/.gemini/antigravity/skills/` (Mac/Linux)  
-Windows: `C:\Users\YourName\.gemini\antigravity\skills\`
+Installs to `~/.gemini/antigravity/skills/ag-stack/` — active in **every project** automatically.
+
+**Restart AntiGravity. Done.**
 
 ---
 
-## What activates all agents at once
+## How to use it
 
 Say any of these in AntiGravity chat:
 
 ```
-"run the full pipeline"
-"build and ship this"
-"do everything"
-"run the team"
-"activate all agents"
+"run the full pipeline on [your goal]"
+"build and ship [feature]"
+"do everything for [task]"
+"run all agents"
 ```
 
-The **ag-orchestrator** skill fires and chains all 8 agents in sequence:
-
-```
-🧠 CEO/Planner          → strategic review + execution plan
-        │
-   ┌────┴────┐
-   ▼         ▼
-🎨 Designer  ⚙️ Eng Manager   ← both run in parallel
-   └────┬────┘
-        │  ← GATE: both must approve before QA runs
-        ▼
-🔍 QA Lead              → browser testing + regression tests
-        │  ← GATE: no open HIGH bugs before security runs
-        ▼
-🔒 Security Officer     → OWASP + STRIDE + secrets scan
-        │  ← GATE: zero CRITICAL findings or deploy is blocked
-        ▼
-🚀 Release Manager      → tests → version bump → changelog → PR
-        │
-        ▼
-📝 Doc Engineer         → syncs README, CHANGELOG, ARCHITECTURE
-```
-
-**Gates are enforced.** If Designer finds a BLOCKER — QA doesn't run until it's fixed.
-If Security finds a CRITICAL — the deploy is hard-blocked. No exceptions.
+AntiGravity loads the ag-stack skill and runs all 8 agents in sequence.
 
 ---
 
-## Or trigger individual agents
+## What actually happens
 
-You can also trigger just one agent by describing what you need:
+```
+Stage 1   🧠 CEO/Planner       Plan goal. Detect scope. List tasks.
+             │
+             │  ← GATE: goal must be clear enough to build
+             │
+Stage 2A  🎨 Designer  ──────┐  run in parallel
+Stage 2B  ⚙️  Eng Manager ───┘
+             │
+             │  ← GATE: both must report 0 blockers before QA runs
+             │
+Stage 3   🔍 QA Lead          Test in real browser. Write regression test per bug.
+             │
+             │  ← GATE: no open HIGH bugs before security runs
+             │
+Stage 4   🔒 Security         OWASP + secrets scan + STRIDE
+             │
+             │  ← GATE: zero CRITICAL findings or deploy is hard-blocked
+             │
+Stage 5   🚀 Release Manager  Tests → version bump → changelog → PR
+             │
+Stage 6   📝 Doc Engineer     Sync README, CHANGELOG, ARCHITECTURE
+```
 
-| What you say | Agent that activates |
+Each gate is real. If Designer finds a blocker → **QA does not run**.
+If Security finds a critical → **Release Manager does not run**. Ever.
+
+---
+
+## After a gate blocks
+
+If an agent finds blockers, the pipeline stops and tells you exactly what to fix.
+
+After you fix it, say:
+```
+"continue pipeline"
+```
+ag-stack reads `.agent/pipeline/` to see where it stopped and resumes from the next stage. It does not re-run completed stages.
+
+---
+
+## Check pipeline status anytime
+
+```bash
+bash .agent/skills/ag-stack/scripts/pipeline-status.sh
+```
+
+Output:
+```
+╔══════════════════════════════════════════════════════════╗
+║              ag-stack Pipeline Status                    ║
+╠══════════════════════════════════════════════════════════╣
+║  1  🧠 CEO/Planner          ✅ COMPLETE                  ║
+║  2A 🎨 Designer             🚫 BLOCKED                   ║
+║  2B ⚙️  Eng Manager          ✅ COMPLETE                  ║
+║  3  🔍 QA Lead              ⬜ NOT RUN                   ║
+║  4  🔒 Security Officer     ⬜ NOT RUN                   ║
+║  5  🚀 Release Manager      ⬜ NOT RUN                   ║
+║  6  📝 Doc Engineer         ⬜ NOT RUN                   ║
+╚══════════════════════════════════════════════════════════╝
+
+  Blockers in 02-designer:
+    - src/components/Hero.tsx:42 — contrast 2.1:1 → Fix: change #999 to #555
+```
+
+---
+
+## What each agent checks
+
+| Agent | What it actually does |
 |---|---|
-| "Plan a SaaS billing feature" | 🧠 ag-ceo |
-| "Review my code changes" | ⚙️ ag-eng-manager |
-| "Check UI for accessibility" | 🎨 ag-designer |
-| "Test the app in a browser" | 🔍 ag-qa |
-| "Audit security before deploy" | 🔒 ag-security |
-| "Ship this as a minor release" | 🚀 ag-release-manager |
-| "Investigate this bug" | 🕵️ ag-detective |
-| "Sync documentation" | 📝 ag-doc-engineer |
+| 🧠 CEO | Strategic review. Scope detection. Phased plan. Surfaces only taste decisions. |
+| 🎨 Designer | AI slop detection. WCAG contrast. Mobile 375px. Tap targets. Error/loading states. |
+| ⚙️ Eng Manager | SQL injection. Empty catch blocks. N+1 queries. Auto-fixes lint and commits it. |
+| 🔍 QA Lead | Opens browser. Clicks every flow. Writes regression test before fixing every bug. |
+| 🔒 Security | Scans secrets in code + git history. OWASP Top 10. STRIDE. npm audit. |
+| 🚀 Release Manager | Verifies branch ≠ main. Tests pass. Bumps version. Writes real CHANGELOG. Opens PR. |
+| 📝 Doc Engineer | Checks README version, CHANGELOG entry, ARCHITECTURE vs actual code. |
 
 ---
 
-## The 9 skills installed
+## Per-project install (instead of global)
 
-```
-~/.gemini/antigravity/skills/
-├── ag-orchestrator/SKILL.md   ← chains ALL agents in sequence (the conductor)
-├── ag-ceo/SKILL.md            ← strategic planning + task breakdown
-├── ag-designer/SKILL.md       ← UI/UX, a11y, mobile, AI slop detection
-├── ag-eng-manager/SKILL.md    ← code review, security patterns, auto-lint
-├── ag-qa/SKILL.md             ← browser testing, regression tests per bug
-├── ag-security/SKILL.md       ← OWASP Top 10 + STRIDE + secrets scan
-├── ag-release-manager/SKILL.md← semver + changelog + PR pipeline
-├── ag-detective/SKILL.md      ← root cause analysis, never "can't reproduce"
-└── ag-doc-engineer/SKILL.md   ← keeps README/CHANGELOG/ARCH in sync
+```bash
+node ~/ag-stack/install.js --project
 ```
 
----
-
-## What the agents actually caught (real session)
-
-| Bug | Agent | Would it have shipped? |
-|---|---|---|
-| OpenAI API key hardcoded in client bundle | 🔒 Security | Yes |
-| Any user can read any other user's data | 🔒 Security | Yes |
-| No rate limit on /upload endpoint | ⚙️ Eng Manager | Yes |
-| PDF parse fails on encrypted files | ⚙️ Eng Manager | Yes |
-| CTA button contrast 2.1:1 (needs 4.5:1) | 🎨 Designer | Yes |
-| Layout breaks at 375px mobile | 🔍 QA Browser | Yes |
-| Icon button with no accessible label | 🎨 Designer | Yes |
+Installs to `.agent/skills/ag-stack/` in your current project only.
 
 ---
 
 ## Update
 
 ```bash
-cd ~/ag-stack && git pull && node install.js --global
+cd ~/ag-stack && git pull && node install.js
 # Restart AntiGravity
 ```
 
-MIT License — if ag-stack caught a bug before it shipped, ⭐ this repo.
+MIT License
